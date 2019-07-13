@@ -6,7 +6,7 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "Maze"
 PROJECT_NUMBER         =
-PROJECT_BRIEF          = "Maze generator"
+PROJECT_BRIEF          = "Empty application"
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = docs
 CREATE_SUBDIRS         = NO
