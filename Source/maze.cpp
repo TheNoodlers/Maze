@@ -26,14 +26,20 @@
 
 #include "PrimMaze.h"
 
-#define  PROGRAM         "Maze"
-#define  DESCRIPTION     "Maze generator"
-#define  LINK            "https://github.com/AnotherJohnH/"
-#define  COPYRIGHT_YEAR  "2019"
-#define  AUTHOR          "John D. Haughton"
+static const char* PROGRAM        = "Maze";
+static const char* DESCRIPTION    = "Maze generator";
+static const char* LINK           = "https://github.com/AnotherJohnH/";
+static const char* AUTHOR         = "John D. Haughton";
+static const char* COPYRIGHT_YEAR = "2019";
 
 class MazeApp : public STB::ConsoleApp
 {
+public:
+   MazeApp()
+      : ConsoleApp(PROGRAM, DESCRIPTION, LINK, AUTHOR, COPYRIGHT_YEAR)
+   {
+   }
+
 private:
    STB::Option<unsigned> scale{      's', "scale",      "Scale",         8};
    STB::Option<unsigned> width{      'W', "width",      "Width",       101};
@@ -56,17 +62,10 @@ private:
 
       return PLT::Event::eventLoop();
    }
-
-public:
-   MazeApp(int argc, const char* argv[])
-      : ConsoleApp(PROGRAM, DESCRIPTION, LINK, AUTHOR, PROJ_VERSION, COPYRIGHT_YEAR)
-   {
-      parseArgsAndStart(argc, argv);
-   }
 };
 
 
 int main(int argc, const char* argv[])
 {
-   MazeApp(argc, argv);
+   return MazeApp().parseArgsAndStart(argc, argv);
 }

@@ -17,8 +17,8 @@ before_install:
 language: cpp
 
 script:
-   - mkdir build
-   - cd build
+   - mkdir build_natve
+   - cd build_native
    - cmake ..
    - make
 
