@@ -20,8 +20,7 @@
 // SOFTWARE.
 //------------------------------------------------------------------------------
 
-#ifndef MAZE_H
-#define MAZE_H
+#pragma once
 
 #include <cstdlib>
 #include <vector>
@@ -38,9 +37,9 @@ public:
       // Prepare an empty maze
       maze.resize(width * height);
 
-      for(size_t x=0; x<width; x++)
+      for(size_t x = 0; x < width; x++)
       {
-         for(size_t y=0; y<height; y++)
+         for(size_t y = 0; y < height; y++)
          {
             set(x, y, ((x == 0) || (x == (width - 1)) || (y == 0) || (y == (height - 1))));
          }
@@ -51,30 +50,33 @@ public:
 
    unsigned getHeight() const { return height; }
 
-   bool get(unsigned x, unsigned y) const { return maze[index(x,y)]; }
+   bool get(unsigned x, unsigned y) const { return maze[index(x, y)]; }
 
    virtual void generate() = 0;
 
-   void draw(GUI::Canvas& canvas, unsigned ox, unsigned oy, unsigned scale)
+   void draw(GUI::Canvas& canvas, unsigned ox, unsigned oy, unsigned scale) const
    {
-      for(unsigned x=0; x<getWidth(); x++)
+      canvas.fillRect(STB::WHITE, ox, oy, ox + getWidth() * scale, oy + getHeight() * scale);
+
+      for(unsigned x = 0; x < getWidth(); x++)
       {
          unsigned px = ox + x * scale;
 
-         for(unsigned y=0; y<getHeight(); y++)
+         for(unsigned y = 0; y < getHeight(); y++)
          {
-            unsigned py = oy + y * scale;
+            if (get(x, y))
+            {
+               unsigned py = oy + y * scale;
 
-            canvas.fillRect(get(x, y) ? STB::BLACK : STB::WHITE,
-                           px, py, px + scale, py + scale);
+               canvas.fillRect(STB::BLACK, px, py, px + scale, py + scale);
+            }
          }
       }
+
+      canvas.refresh();
    }
 
 protected:
-   const unsigned width;
-   const unsigned height;
-
    size_t index(unsigned x, unsigned y) const { return y * width + x; }
 
    void set(unsigned x, unsigned y, bool value = true)
@@ -88,7 +90,7 @@ protected:
    }
 
 private:
+   const unsigned    width;
+   const unsigned    height;
    std::vector<bool> maze;
 };
-
-#endif

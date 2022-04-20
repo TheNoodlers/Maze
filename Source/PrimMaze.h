@@ -20,10 +20,9 @@
 // SOFTWARE.
 //------------------------------------------------------------------------------
 
-#ifndef PRIM_MAZE_H
-#define PRIM_MAZE_H
+#pragma once
 
-#include <cstdlib>
+#include <random>
 
 #include "Maze.h"
 
@@ -36,8 +35,8 @@ public:
         double   density_ = 0.75)
       : Maze(width_, height_)
       // Scale complexity and density according to the size
-      , complexity(5 * complexity_ * (width + height))
-      , density(density_ * (width / 2) * (height / 2))
+      , complexity(5 * complexity_ * (getWidth() + getHeight()))
+      , density(density_ * (getWidth() / 2) * (getHeight() / 2))
    {
    }
 
@@ -49,29 +48,37 @@ public:
          signed y;
       };
 
+      std::random_device              rd;
+      std::mt19937                    gen(rd());
+      std::uniform_int_distribution<> dist_w(0, getWidth() / 2 - 1);
+      std::uniform_int_distribution<> dist_h(0, getHeight() / 2 - 1);
+
       std::vector<Coord> neighbours;
       neighbours.reserve(4);
 
-      for(size_t i=0; i<density; i++)
+      for(size_t i = 0; i < density; i++)
       {
-         signed x = rand() % (width  / 2) * 2;
-         signed y = rand() % (height / 2) * 2;
+         signed x = dist_w(gen) * 2;
+         signed y = dist_h(gen) * 2;
 
          set(x, y);
 
-         for(size_t j=0; j<complexity; j++)
+         for(size_t j = 0; j < complexity; j++)
          {
             neighbours.clear();
 
-            if (x > 1)            neighbours.push_back({x - 2, y});
-            if (x < (width - 2))  neighbours.push_back({x + 2, y});
-            if (y > 1)            neighbours.push_back({x, y - 2});
-            if (y < (height - 2)) neighbours.push_back({x, y + 2});
+            if (x > 1)                 neighbours.push_back({x - 2, y});
+            if (x < (getWidth() - 2))  neighbours.push_back({x + 2, y});
+            if (y > 1)                 neighbours.push_back({x, y - 2});
+            if (y < (getHeight() - 2)) neighbours.push_back({x, y + 2});
 
-            if (!neighbours.empty())
+            if (not neighbours.empty())
             {
-               Coord pos = neighbours[rand() % neighbours.size()];
-               if (!get(pos.x, pos.y))
+               std::uniform_int_distribution<> dist(0, neighbours.size() - 1);
+
+               Coord pos = neighbours[dist(gen)];
+
+               if (not get(pos.x, pos.y))
                {
                   set(pos.x, pos.y);
                   set(pos.x + (x - pos.x)/2, pos.y + (y - pos.y)/2);
@@ -87,5 +94,3 @@ private:
    const unsigned complexity;
    const unsigned density;
 };
-
-#endif

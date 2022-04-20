@@ -52,18 +52,15 @@ private:
       PrimMaze   maze(width, height, complexity, density);
       GUI::Frame frame("Maze", maze.getWidth() * scale, maze.getHeight() * scale);
 
-      maze.generate();
-
       frame.clear(STB::BLACK);
 
-      maze.draw(frame, 0, 0, scale);
+      maze.generate();
 
-      frame.refresh();
+      maze.draw(frame, 0, 0, scale);
 
       return PLT::Event::eventLoop();
    }
 };
-
 
 int main(int argc, const char* argv[])
 {

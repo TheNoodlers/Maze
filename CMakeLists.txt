@@ -27,7 +27,6 @@ project(Maze
         LANGUAGES C CXX ASM)
 
 set(author  John D. Haughton)
-
 set(source  Source/maze.cpp)
 set(binary  maze)
 
