@@ -23,74 +23,186 @@
 #pragma once
 
 #include <cstdlib>
+#include <random>
 #include <vector>
+
+#include "Renderer.h"
 
 class Maze
 {
 public:
    Maze(unsigned width_,
-        unsigned height_)
+        unsigned height_,
+        double   param1_,
+        double   param2_)
       // Ensure width and height are odd
-      : width((width_ / 2) * 2 + 1)
+      : param1(param1_)
+      , param2(param2_)
+      , width((width_ / 2) * 2 + 1)
       , height((height_ / 2) * 2 + 1)
    {
-      // Prepare an empty maze
-      maze.resize(width * height);
-
-      for(size_t x = 0; x < width; x++)
-      {
-         for(size_t y = 0; y < height; y++)
-         {
-            set(x, y, ((x == 0) || (x == (width - 1)) || (y == 0) || (y == (height - 1))));
-         }
-      }
+      map.resize(width * height);
    }
+
+   void plot(Renderer& frame_)
+   {
+      frame = &frame_;
+
+      clear();
+
+      setBoundary();
+
+      try
+      {
+         generate();
+      }
+      catch(...)
+      {
+      }
+ 
+      frame->refresh();
+
+      frame = nullptr;
+   }
+
+   void solve(Renderer& frame_)
+   {
+      frame = &frame_;
+
+      try
+      {
+         doSolve();
+      }
+      catch(...)
+      {
+      }
+ 
+      frame->refresh();
+
+      frame = nullptr;
+   }
+
+protected:
+   enum Cell : uint8_t
+   {
+      PATH    = 0,
+      WALL    = 1,
+      VISITED = 2
+   };
+
+   struct Coord
+   {
+      signed x;
+      signed y;
+   };
 
    unsigned getWidth() const { return width; }
 
    unsigned getHeight() const { return height; }
 
-   bool get(unsigned x, unsigned y) const { return maze[index(x, y)]; }
+   Cell get(unsigned x, unsigned y) const { return map[index(x, y)]; }
 
-   virtual void generate() = 0;
-
-   void draw(GUI::Canvas& canvas, unsigned ox, unsigned oy, unsigned scale) const
+   //! Set a cell as path
+   void path(unsigned x, unsigned y)
    {
-      canvas.fillRect(STB::WHITE, ox, oy, ox + getWidth() * scale, oy + getHeight() * scale);
+      map[index(x,y)] = PATH;
 
-      for(unsigned x = 0; x < getWidth(); x++)
+      if (frame->plot(COL_WALL, x, y))
       {
-         unsigned px = ox + x * scale;
+         throw true;
+      }
+   }
 
-         for(unsigned y = 0; y < getHeight(); y++)
+   //! Set a cell as wall 
+   void wall(unsigned x, unsigned y)
+   {
+      map[index(x,y)] = WALL;
+
+      if (frame->plot(COL_WALL, x, y))
+      {
+         throw true;
+      }
+   }
+
+   //! Set a cell as visited
+   void visit(unsigned x, unsigned y)
+   {
+      map[index(x,y)] = VISITED;
+
+      if (frame->plot(COL_VISIT, x, y))
+      {
+         throw true;
+      }
+   }
+
+   std::random_device rand_dev;
+   std::mt19937       rand_gen{rand_dev()};
+   double             param1;
+   double             param2;
+
+private:
+   void doSolve()
+   {
+      Coord pos{0, 1};
+
+      for(pos.x = 0; pos.x < width; pos.x++)
+      {
+         if (get(pos.x, pos.y) == PATH)
          {
-            if (get(x, y))
-            {
-               unsigned py = oy + y * scale;
-
-               canvas.fillRect(STB::BLACK, px, py, px + scale, py + scale);
-            }
+            break;
          }
       }
 
-      canvas.refresh();
+      std::vector<Coord> list;
+
+      while(true)
+      {
+         visit(pos.x, pos.y);
+
+         if (get(pos.x + 1, pos.y) == PATH) list.push_back({pos.x + 1, pos.y});
+         if (get(pos.x - 1, pos.y) == PATH) list.push_back({pos.x - 1, pos.y});
+         if (get(pos.x, pos.y + 1) == PATH) list.push_back({pos.x, pos.y + 1});
+         if (get(pos.x, pos.y - 1) == PATH) list.push_back({pos.x, pos.y - 1});
+
+         if (list.empty()) break;
+
+         pos = list.back();
+         list.pop_back();
+      }
    }
 
-protected:
+   void setBoundary()
+   {
+      for(size_t x = 0; x < width; x++)
+      {
+         wall(x, 0);
+         wall(x, height - 1);
+      }
+
+      for(size_t y = 1; y < (height - 1); y++)
+      {
+         wall(0, y);
+         wall(width - 1, y);
+      }
+   }
+
+   void clear()
+   {
+      frame->clear(COL_SPACE);
+
+      std::fill(map.begin(), map.end(), PATH);
+   }
+
    size_t index(unsigned x, unsigned y) const { return y * width + x; }
 
-   void set(unsigned x, unsigned y, bool value = true)
-   {
-      maze[index(x,y)] = value;
-   }
+   virtual void generate() = 0;
 
-   void clr(unsigned x, unsigned y)
-   {
-      set(x, y, false);
-   }
+   static const STB::Colour COL_WALL  = STB::BLACK;
+   static const STB::Colour COL_SPACE = STB::WHITE;
+   static const STB::Colour COL_VISIT = STB::RED;
 
-private:
    const unsigned    width;
    const unsigned    height;
-   std::vector<bool> maze;
+   std::vector<Cell> map;
+   Renderer*         frame{nullptr};
 };

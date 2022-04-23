@@ -23,7 +23,7 @@
 cmake_minimum_required(VERSION 3.11.4)
 
 project(Maze
-        VERSION   0.1.0
+        VERSION   0.1.1
         LANGUAGES C CXX ASM)
 
 set(author  John D. Haughton)

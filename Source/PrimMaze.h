@@ -22,46 +22,33 @@
 
 #pragma once
 
-#include <random>
-
 #include "Maze.h"
 
 class PrimMaze : public Maze
 {
 public:
-   PrimMaze(unsigned width_,
-        unsigned height_,
-        double   complexity_ = 0.75,
-        double   density_ = 0.75)
-      : Maze(width_, height_)
-      // Scale complexity and density according to the size
-      , complexity(5 * complexity_ * (getWidth() + getHeight()))
-      , density(density_ * (getWidth() / 2) * (getHeight() / 2))
-   {
-   }
+   using Maze::Maze;
 
    virtual void generate() override
    {
-      struct Coord
-      {
-         signed x;
-         signed y;
-      };
-
-      std::random_device              rd;
-      std::mt19937                    gen(rd());
       std::uniform_int_distribution<> dist_w(0, getWidth() / 2 - 1);
       std::uniform_int_distribution<> dist_h(0, getHeight() / 2 - 1);
 
       std::vector<Coord> neighbours;
       neighbours.reserve(4);
 
+      // Scale density (2nd parameter) according to the size
+      unsigned density = param2 * (getWidth() / 2) * (getHeight() / 2);
+
       for(size_t i = 0; i < density; i++)
       {
-         signed x = dist_w(gen) * 2;
-         signed y = dist_h(gen) * 2;
+         // Pick a random cell and mark it as part of the maze
+         signed x = dist_w(rand_gen) * 2;
+         signed y = dist_h(rand_gen) * 2;
+         wall(x, y);
 
-         set(x, y);
+         // Scale complexity (1st parameter) according to the size
+         unsigned complexity = 5 * param1 * (getWidth() + getHeight());
 
          for(size_t j = 0; j < complexity; j++)
          {
@@ -76,12 +63,12 @@ public:
             {
                std::uniform_int_distribution<> dist(0, neighbours.size() - 1);
 
-               Coord pos = neighbours[dist(gen)];
+               Coord pos = neighbours[dist(rand_gen)];
 
-               if (not get(pos.x, pos.y))
+               if (get(pos.x, pos.y) == PATH)
                {
-                  set(pos.x, pos.y);
-                  set(pos.x + (x - pos.x)/2, pos.y + (y - pos.y)/2);
+                  wall(pos.x, pos.y);
+                  wall(pos.x + (x - pos.x)/2, pos.y + (y - pos.y)/2);
                   x = pos.x;
                   y = pos.y;
                }
@@ -89,8 +76,4 @@ public:
          }
       }
    }
-
-private:
-   const unsigned complexity;
-   const unsigned density;
 };

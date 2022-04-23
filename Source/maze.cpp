@@ -21,10 +21,9 @@
 //------------------------------------------------------------------------------
 
 #include "STB/ConsoleApp.h"
-#include "GUI/Frame.h"
-#include "PLT/Event.h"
 
 #include "PrimMaze.h"
+#include "Renderer.h"
 
 static const char* PROGRAM        = "Maze";
 static const char* DESCRIPTION    = "Maze generator";
@@ -41,24 +40,21 @@ public:
    }
 
 private:
-   STB::Option<unsigned> scale{      's', "scale",      "Scale",         8};
-   STB::Option<unsigned> width{      'W', "width",      "Width",       101};
-   STB::Option<unsigned> height{     'H', "height",     "Height",      101};
-   STB::Option<double>   complexity{ 'c', "complexity", "Complexity", 0.75};
-   STB::Option<double>   density{    'd', "density",    "Density",    0.75};
+   STB::Option<unsigned> width{     'W', "width",      "Width",       101};
+   STB::Option<unsigned> height{    'H', "height",     "Height",      101};
+   STB::Option<unsigned> scale{     's', "scale",      "Scale",         8};
+   STB::Option<double>   complexity{'c', "complexity", "Complexity", 0.75};
+   STB::Option<double>   density{   'd', "density",    "Density",    0.75};
 
    virtual int startConsoleApp() override
    {
-      PrimMaze   maze(width, height, complexity, density);
-      GUI::Frame frame("Maze", maze.getWidth() * scale, maze.getHeight() * scale);
+      Renderer renderer("Maze", width, height, scale);
+      PrimMaze maze(width, height, complexity, density);
 
-      frame.clear(STB::BLACK);
+      maze.plot(renderer);
+      maze.solve(renderer);
 
-      maze.generate();
-
-      maze.draw(frame, 0, 0, scale);
-
-      return PLT::Event::eventLoop();
+      return renderer.waitForQuit();
    }
 };
 
