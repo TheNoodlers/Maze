@@ -20,23 +20,15 @@
 #  SOFTWARE.
 #-------------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.11.4)
+cmake_minimum_required(VERSION 3.19.1)
 
 project(Maze
         VERSION   0.1.1
-        LANGUAGES C CXX ASM)
+        LANGUAGES CXX)
 
-set(author  John D. Haughton)
-set(source  Source/maze.cpp)
-set(binary  maze)
+add_subdirectory(Platform)
 
-#-------------------------------------------------------------------------------
+add_executable(maze Source/maze.cpp)
+target_link_libraries(maze GUI STB PLT)
 
-include(Platform/build.cmake NO_POLICY_SCOPE)
-
-#-------------------------------------------------------------------------------
-
-add_executable(${binary} ${source})
-target_link_libraries(${binary} ${PLT_libs})
-
-install(TARGETS ${binary} RUNTIME DESTINATION bin)
+install(TARGETS maze RUNTIME DESTINATION bin)
