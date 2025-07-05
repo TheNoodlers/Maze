@@ -20,11 +20,11 @@
 #  SOFTWARE.
 #-------------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.19.1)
+cmake_minimum_required(VERSION 3.20)
 
 project(Maze
-        VERSION   0.1.1
-        LANGUAGES CXX)
+        LANGUAGES CXX
+        VERSION   0.1.1)
 
 add_subdirectory(Platform)
 
