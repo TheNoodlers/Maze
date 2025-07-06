@@ -51,7 +51,15 @@ public:
       clear();
 
       setBoundary();
-      generate();
+
+      try
+      {
+         generate();
+      }
+      catch(...)
+      {
+      }
+ 
       frame->refresh();
 
       frame = nullptr;
@@ -61,8 +69,16 @@ public:
    {
       frame = &frame_;
 
-      doSolve();
+      try
+      {
+         doSolve();
+      }
+      catch(...)
+      {
+      }
+ 
       frame->refresh();
+
       frame = nullptr;
    }
 
@@ -91,7 +107,10 @@ protected:
    {
       map[index(x,y)] = PATH;
 
-      frame->plot(COL_WALL, x, y);
+      if (frame->plot(COL_WALL, x, y))
+      {
+         throw true;
+      }
    }
 
    //! Set a cell as wall 
@@ -99,7 +118,10 @@ protected:
    {
       map[index(x,y)] = WALL;
 
-      frame->plot(COL_WALL, x, y);
+      if (frame->plot(COL_WALL, x, y))
+      {
+         throw true;
+      }
    }
 
    //! Set a cell as visited
@@ -107,7 +129,10 @@ protected:
    {
       map[index(x,y)] = VISITED;
 
-      frame->plot(COL_VISIT, x, y);
+      if (frame->plot(COL_VISIT, x, y))
+      {
+         throw true;
+      }
    }
 
    std::random_device rand_dev;
