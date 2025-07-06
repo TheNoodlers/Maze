@@ -44,9 +44,9 @@ public:
       map.resize(width * height);
    }
 
-   void plot(Renderer& frame_)
+   void plot(Renderer& renderer_)
    {
-      frame = &frame_;
+      renderer = &renderer_;
 
       clear();
 
@@ -60,14 +60,16 @@ public:
       {
       }
  
-      frame->refresh();
+      renderer->refresh();
 
-      frame = nullptr;
+      renderer = nullptr;
    }
 
-   void solve(Renderer& frame_)
+   void solve(Renderer& renderer_)
    {
-      frame = &frame_;
+      renderer = &renderer_;
+
+      renderer->setRefreshLimit(1);
 
       try
       {
@@ -77,9 +79,9 @@ public:
       {
       }
  
-      frame->refresh();
+      renderer->refresh();
 
-      frame = nullptr;
+      renderer = nullptr;
    }
 
 protected:
@@ -102,34 +104,23 @@ protected:
 
    Cell get(unsigned x, unsigned y) const { return map[index(x, y)]; }
 
-   //! Set a cell as path
-   void path(unsigned x, unsigned y)
-   {
-      map[index(x,y)] = PATH;
-
-      if (frame->plot(COL_WALL, x, y))
-      {
-         throw true;
-      }
-   }
-
    //! Set a cell as wall 
    void wall(unsigned x, unsigned y)
    {
       map[index(x,y)] = WALL;
 
-      if (frame->plot(COL_WALL, x, y))
+      if (renderer->plot(COL_WALL, x, y))
       {
          throw true;
       }
    }
 
    //! Set a cell as visited
-   void visit(unsigned x, unsigned y)
+   void visit(unsigned x, unsigned y, size_t dist)
    {
       map[index(x,y)] = VISITED;
 
-      if (frame->plot(COL_VISIT, x, y))
+      if (renderer->plot(dist, x, y))
       {
          throw true;
       }
@@ -143,9 +134,16 @@ protected:
 private:
    void doSolve()
    {
-      Coord pos{0, 1};
+      struct Place
+      {
+         signed x, y;
+         size_t dist;
+      };
 
-      for(pos.x = 0; pos.x < width; pos.x++)
+      // Find starting point
+      Place pos{1, 1, 0};
+
+      for(; pos.x < width; pos.x++)
       {
          if (get(pos.x, pos.y) == PATH)
          {
@@ -153,22 +151,28 @@ private:
          }
       }
 
-      std::vector<Coord> list;
+      size_t max_dist{0};
+      std::vector<Place> list{};
 
       while(true)
       {
-         visit(pos.x, pos.y);
+         if (pos.dist > max_dist)
+            max_dist = pos.dist;
 
-         if (get(pos.x + 1, pos.y) == PATH) list.push_back({pos.x + 1, pos.y});
-         if (get(pos.x - 1, pos.y) == PATH) list.push_back({pos.x - 1, pos.y});
-         if (get(pos.x, pos.y + 1) == PATH) list.push_back({pos.x, pos.y + 1});
-         if (get(pos.x, pos.y - 1) == PATH) list.push_back({pos.x, pos.y - 1});
+         visit(pos.x, pos.y, pos.dist);
+
+         if (get(pos.x + 1, pos.y) == PATH) list.push_back({pos.x + 1, pos.y, pos.dist + 1});
+         if (get(pos.x - 1, pos.y) == PATH) list.push_back({pos.x - 1, pos.y, pos.dist + 1});
+         if (get(pos.x, pos.y + 1) == PATH) list.push_back({pos.x, pos.y + 1, pos.dist + 1});
+         if (get(pos.x, pos.y - 1) == PATH) list.push_back({pos.x, pos.y - 1, pos.dist + 1});
 
          if (list.empty()) break;
 
          pos = list.back();
          list.pop_back();
       }
+
+      printf("max_dist = %zu\n", max_dist);
    }
 
    void setBoundary()
@@ -188,7 +192,7 @@ private:
 
    void clear()
    {
-      frame->clear(COL_SPACE);
+      renderer->clear(COL_SPACE);
 
       std::fill(map.begin(), map.end(), PATH);
    }
@@ -204,5 +208,5 @@ private:
    const unsigned    width;
    const unsigned    height;
    std::vector<Cell> map;
-   Renderer*         frame{nullptr};
+   Renderer*         renderer{nullptr};
 };

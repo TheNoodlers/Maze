@@ -48,7 +48,7 @@ private:
 
    virtual int startConsoleApp() override
    {
-      Renderer renderer("Maze", width, height, scale);
+      Renderer renderer(PROGRAM, width, height, scale);
       PrimMaze maze(width, height, complexity, density);
 
       maze.plot(renderer);

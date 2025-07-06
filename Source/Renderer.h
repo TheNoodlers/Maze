@@ -44,6 +44,12 @@ public:
       frame.clear(colour);
    }
 
+   //! Set how many plot()s before a refresh
+   void setRefreshLimit(unsigned limit_)
+   {
+      refresh_limit = limit_;
+   }
+
    //! Plot a single point in the frame
    bool plot(STB::Colour colour, unsigned x, unsigned y)
    {
@@ -52,7 +58,7 @@ public:
 
       frame.fillRect(colour, px, py, px + scale, py + scale);
 
-      if (++n > REFRESH_LIMIT)
+      if (++n > refresh_limit)
       {
          n = 0;
          refresh();
@@ -88,5 +94,6 @@ private:
 
    GUI::Frame frame;
    unsigned   scale;
+   unsigned   refresh_limit{REFRESH_LIMIT};
    unsigned   n{};
 };
