@@ -1,9 +1,3 @@
 # Maze
 
-A good starting point.
-
-## Status
-
-[![Build Status](https://travis-ci.org/AnotherJohnH/Maze.svg?branch=master)](https://travis-ci.org/AnotherJohnH/Maze)
-
-
+C++ and Python random maze generator using Prim's algorithm.
