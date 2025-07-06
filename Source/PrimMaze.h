@@ -24,6 +24,7 @@
 
 #include "Maze.h"
 
+//! Generate maze using Prim's algorithm
 class PrimMaze : public Maze
 {
 public:

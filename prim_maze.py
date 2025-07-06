@@ -4,23 +4,33 @@ import random
 
 class Maze:
 
+   PATH = ' '
+   WALL = '#'
+
    def __init__(self, width, height, complexity = 0.75, density = 0.75):
-      self.width      = width
-      self.height     = height
+
+      # Ensure width and height are odd
+      self.width      = (width // 2) * 2 + 1
+      self.height     = (height // 2) * 2 + 1
       self.complexity = complexity
       self.density    = density
 
+      self.clear()
+      self.boundary()
       self.generate()
 
    def print(self):
       """ print map on the console """
-      print('+' + ('-' * self.width) + '+')
       for row in self.map:
-         print('|', end='')
          for cell in row:
             print(cell, end='')
-         print('|')
-      print('+' + ('-' * self.width) + '+')
+         print('')
+
+   def build(self, x, y):
+      self.map[y][x] = Maze.WALL
+
+   def is_path(self, x, y):
+      return self.map[y][x] == Maze.PATH
 
    def clear(self):
       """ reset to an empty map """
@@ -28,19 +38,22 @@ class Maze:
       for y in range(self.height):
           row = []
           for x in range(self.width):
-             row.append(' ')
+             row.append(Maze.PATH)
           self.map.append(row)
+
+   def boundary(self):
+      """ build boundary wall """
+
+      for x in range(self.width):
+         self.build(x, 0)
+         self.build(x, self.height - 1)
+
+      for y in range(self.height):
+         self.build(0, y)
+         self.build(self.width - 1, y)
 
    def generate(self):
       """ generate a random maze using prims algorithm """
-
-      def build(x, y):
-         self.map[y][x] = '#'
-
-      def is_path(x, y):
-         return self.map[y][x] == ' '
-
-      self.clear()
 
       scaled_complexity = 5 * self.complexity * (self.width + self.height)
       scaled_density    = self.density * (self.width // 2) * (self.height // 2)
@@ -50,7 +63,7 @@ class Maze:
          x = random.randint(0, (self.width  // 2) - 1) * 2
          y = random.randint(0, (self.height // 2) - 1) * 2
 
-         build(x, y)
+         self.build(x, y)
 
          for j in range(int(scaled_complexity)):
 
@@ -70,13 +83,13 @@ class Maze:
                index  = random.randint(0, len(neighbours) - 1)
                nx, ny = neighbours[index]
 
-               if is_path(nx, ny):
-                  build(nx, ny)
-                  build(nx + (x - nx) // 2, ny + (y - ny) // 2)
+               if self.is_path(nx, ny):
+                  self.build(nx, ny)
+                  self.build(nx + (x - nx) // 2, ny + (y - ny) // 2)
                   x = nx
                   y = ny
 
-maze = Maze(61, 31)
+maze = Maze(60, 30)
 
 maze.print()
 

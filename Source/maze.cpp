@@ -27,7 +27,7 @@
 
 static const char* PROGRAM        = "Maze";
 static const char* DESCRIPTION    = "Maze generator";
-static const char* LINK           = "https://github.com/AnotherJohnH/";
+static const char* LINK           = "https://github.com/TheNoodlers/";
 static const char* AUTHOR         = "John D. Haughton";
 static const char* COPYRIGHT_YEAR = "2019";
 
