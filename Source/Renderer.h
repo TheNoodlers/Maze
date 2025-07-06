@@ -22,19 +22,17 @@
 
 #pragma once
 
-#include <string>
-
 #include "GUI/Frame.h"
 #include "PLT/Event.h"
 
 class Renderer
 {
 public:
-   Renderer(const std::string& title_,
-            unsigned           width_,
-            unsigned           height_,
-            unsigned           scale_)
-      : frame(title_.c_str(), width_ * scale_, height_ * scale_)
+   Renderer(const char* title_,
+            unsigned    width_,
+            unsigned    height_,
+            unsigned    scale_)
+      : frame(title_, width_ * scale_, height_ * scale_)
       , scale(scale_)
    {
       clear(STB::BLACK);
