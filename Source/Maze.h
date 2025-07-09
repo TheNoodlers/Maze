@@ -69,7 +69,7 @@ public:
    {
       renderer = &renderer_;
 
-      renderer->setRefreshLimit(1);
+      renderer->setRefreshLimit(10000001);
 
       try
       {
@@ -85,12 +85,11 @@ public:
    }
 
 protected:
-   enum Cell : uint8_t
-   {
-      PATH    = 0,
-      WALL    = 1,
-      VISITED = 2
-   };
+   using Cell = uint32_t;
+
+   static constexpr Cell PATH    = 0xFFFFffff;
+   static constexpr Cell WALL    = 0;
+   static constexpr Cell VISITED = 1;
 
    struct Coord
    {
@@ -118,9 +117,9 @@ protected:
    //! Set a cell as visited
    void visit(unsigned x, unsigned y, size_t dist)
    {
-      map[index(x,y)] = VISITED;
+      map[index(x,y)] = dist;
 
-      if (renderer->plot(dist, x, y))
+      if (renderer->plotPal(dist, x, y))
       {
          throw true;
       }
@@ -152,24 +151,40 @@ private:
       }
 
       size_t max_dist{0};
-      std::vector<Place> list{};
+      std::vector<Place> list_a{};
+      std::vector<Place> list_b{};
+
+      list_a.push_back(pos);
 
       while(true)
       {
-         if (pos.dist > max_dist)
-            max_dist = pos.dist;
+         list_b.clear();
 
-         visit(pos.x, pos.y, pos.dist);
+         for(const auto& p : list_a)
+         {
+            if (p.dist > max_dist)
+               max_dist = p.dist;
 
-         if (get(pos.x + 1, pos.y) == PATH) list.push_back({pos.x + 1, pos.y, pos.dist + 1});
-         if (get(pos.x - 1, pos.y) == PATH) list.push_back({pos.x - 1, pos.y, pos.dist + 1});
-         if (get(pos.x, pos.y + 1) == PATH) list.push_back({pos.x, pos.y + 1, pos.dist + 1});
-         if (get(pos.x, pos.y - 1) == PATH) list.push_back({pos.x, pos.y - 1, pos.dist + 1});
+            visit(p.x, p.y, p.dist);
 
-         if (list.empty()) break;
+            if (get(p.x + 1, p.y) > (p.dist + 1))
+               list_b.push_back({p.x + 1, p.y, p.dist + 1});
 
-         pos = list.back();
-         list.pop_back();
+            if (get(p.x - 1, p.y) > (p.dist + 1))
+               list_b.push_back({p.x - 1, p.y, p.dist + 1});
+
+            if (get(p.x, p.y + 1) > (p.dist + 1))
+               list_b.push_back({p.x, p.y + 1, p.dist + 1});
+
+            if (get(p.x, p.y - 1) > (p.dist + 1))
+               list_b.push_back({p.x, p.y - 1, p.dist + 1});
+         }
+
+         renderer->refresh();
+
+         if (list_b.empty()) break;
+
+         std::swap(list_a, list_b);
       }
 
       printf("max_dist = %zu\n", max_dist);
@@ -203,7 +218,6 @@ private:
 
    static const STB::Colour COL_WALL  = STB::BLACK;
    static const STB::Colour COL_SPACE = STB::WHITE;
-   static const STB::Colour COL_VISIT = STB::RED;
 
    const unsigned    width;
    const unsigned    height;

@@ -36,6 +36,8 @@ public:
       , scale(scale_)
    {
       clear(STB::BLACK);
+
+      buildPalette();
    }
 
    //! Clear frame to a single colour
@@ -69,6 +71,12 @@ public:
       return false;
    }
 
+   //! Plot a single point in the frame
+   bool plotPal(size_t index, unsigned x, unsigned y)
+   {
+      return plot(palette[index % PALETTE_SIZE], x, y);
+   }
+
    //! Refresh the frame to the display
    void refresh()
    {
@@ -90,10 +98,35 @@ public:
    }
 
 private:
-   static const unsigned REFRESH_LIMIT = 500;
+   void buildPalette()
+   {
+      for(unsigned bgr = 0; bgr < 7; ++bgr)
+      {
+         uint8_t fr_red = ((bgr >> 0) & 1) * 0xFF;
+         uint8_t fr_grn = ((bgr >> 1) & 1) * 0xFF;
+         uint8_t fr_blu = ((bgr >> 2) & 1) * 0xFF;
 
-   GUI::Frame frame;
-   unsigned   scale;
-   unsigned   refresh_limit{REFRESH_LIMIT};
-   unsigned   n{};
+         uint8_t to_red = (((bgr + 1) >> 0) & 1) * 0xFF;
+         uint8_t to_grn = (((bgr + 1) >> 1) & 1) * 0xFF;
+         uint8_t to_blu = (((bgr + 1) >> 2) & 1) * 0xFF;
+
+         for(unsigned i = 0; i < 256; ++i)
+         {
+            uint8_t red = (fr_red * (255 - i) + to_red * i) / 255;
+            uint8_t grn = (fr_grn * (255 - i) + to_grn * i) / 255;
+            uint8_t blu = (fr_blu * (255 - i) + to_blu * i) / 255;
+
+            palette[PALETTE_SIZE - (bgr * 256 + i) - 1] = STB::RGB(red, grn, blu);
+         }
+      }
+   }
+
+   static const unsigned REFRESH_LIMIT = 500;
+   static const unsigned PALETTE_SIZE  = 0x700;
+
+   GUI::Frame  frame;
+   unsigned    scale;
+   unsigned    refresh_limit{REFRESH_LIMIT};
+   unsigned    n{};
+   STB::Colour palette[PALETTE_SIZE];
 };
