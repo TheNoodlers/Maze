@@ -40,9 +40,9 @@ public:
    }
 
 private:
-   STB::Option<unsigned> width{     'W', "width",      "Width",       101};
-   STB::Option<unsigned> height{    'H', "height",     "Height",      101};
-   STB::Option<unsigned> scale{     's', "scale",      "Scale",         8};
+   STB::Option<unsigned> width{     'W', "width",      "Width",       400};
+   STB::Option<unsigned> height{    'H', "height",     "Height",      400};
+   STB::Option<unsigned> scale{     's', "scale",      "Scale",         2};
    STB::Option<double>   complexity{'c', "complexity", "Complexity", 0.75};
    STB::Option<double>   density{   'd', "density",    "Density",    0.75};
 

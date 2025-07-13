@@ -69,8 +69,6 @@ public:
    {
       renderer = &renderer_;
 
-      renderer->setRefreshLimit(10000001);
-
       try
       {
          doSolve();
@@ -139,8 +137,8 @@ private:
          size_t dist;
       };
 
-      // Find starting point
-      Place pos{1, 1, 0};
+      // Find starting point near the middle
+      Place pos{int(width / 2), int(height / 2), 0};
 
       for(; pos.x < width; pos.x++)
       {

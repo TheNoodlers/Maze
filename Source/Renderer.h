@@ -22,6 +22,8 @@
 
 #pragma once
 
+#include <ctime>
+
 #include "GUI/Frame.h"
 #include "PLT/Event.h"
 
@@ -38,18 +40,14 @@ public:
       clear(STB::BLACK);
 
       buildPalette();
+
+      refresh_time = clock();
    }
 
    //! Clear frame to a single colour
    void clear(STB::Colour colour)
    {
       frame.clear(colour);
-   }
-
-   //! Set how many plot()s before a refresh
-   void setRefreshLimit(unsigned limit_)
-   {
-      refresh_limit = limit_;
    }
 
    //! Plot a single point in the frame
@@ -60,12 +58,16 @@ public:
 
       frame.fillRect(colour, px, py, px + scale, py + scale);
 
-      if (++n > refresh_limit)
+      if (isRefresh())
       {
-         n = 0;
          refresh();
 
-         return pollForQuit();
+         // Poll for quit at ~1 Hz
+         if (++n >= REFRESH_FREQ)
+         {
+            n = 0;
+            return pollForQuit();
+         }
       }
 
       return false;
@@ -121,12 +123,27 @@ private:
       }
    }
 
-   static const unsigned REFRESH_LIMIT = 500;
-   static const unsigned PALETTE_SIZE  = 0x700;
+   bool isRefresh()
+   {
+      signed remainder = refresh_time - clock();
+      if (remainder > 0)
+         return false;
+
+      scheduleRefresh();
+      return true;
+   }
+
+   void scheduleRefresh()
+   {
+      refresh_time = clock() + (CLOCKS_PER_SEC / REFRESH_FREQ);
+   }
+
+   static const unsigned REFRESH_FREQ = 20;
+   static const unsigned PALETTE_SIZE = 0x700;
 
    GUI::Frame  frame;
    unsigned    scale;
-   unsigned    refresh_limit{REFRESH_LIMIT};
-   unsigned    n{};
+   clock_t     refresh_time;
+   unsigned    n{REFRESH_FREQ};
    STB::Colour palette[PALETTE_SIZE];
 };
