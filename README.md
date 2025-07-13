@@ -2,7 +2,14 @@
 
 ![screenshot](Docs/Screenshot.png)
 
-## Source checkout
+## Dependencies
+
++ https://github.com/AnotherJohnH/Platform  (pulled in at checkout)
++ SDL2
++ cmake via UNIX make or auto detection of ninja if installed
++ Python3
+
+## Checkout
 
 This repo uses git sub-modules, so checkout using --recurse to clone all the
 dependent source...
@@ -13,18 +20,10 @@ or
 
     git clone --recurse ssh://git@github.com/TheNoodlers/Maze.git
 
-## Software dependencies
-
-+ https://github.com/AnotherJohnH/Platform
-+ **cmake** via UNIX **make** or auto detection of **ninja** if installed
-+ Python3
-+ SDL2
-
 ## Build
 
-Developed on MacOS but should build on Linux too.
-
-Indirect build with **cmake** and **make** or **ninja**...
+Developed on MacOS but should build on Linux too. Indirect build with
+`cmake` and `make` or `ninja`...
 
     make
 
@@ -37,9 +36,7 @@ Direct build using cmake...
 
 ## Run
 
-After a build binary will be found here buid/native/maze
-
-Command line interface...
+After a build binary will be found here `buid/native/maze`. Command line interface...
 
     NAME
          Maze - Maze generator
