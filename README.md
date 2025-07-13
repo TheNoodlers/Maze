@@ -2,6 +2,8 @@
 
 C++ and Python random maze generator using Prim's algorithm.
 
+![screenshot](Docs/Screenshot.png)
+
 ## Source checkout
 
 This repo uses git sub-modules, so checkout using --recurse to clone all the
