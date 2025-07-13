@@ -19,12 +19,14 @@ class Maze:
       self.boundary()
       self.generate()
 
-   def print(self):
-      """ print map on the console """
+   def __str__(self):
+      """ convert map to a string """
+      text = ''
       for row in self.map:
          for cell in row:
-            print(cell, end='')
-         print('')
+            text += cell
+         text += '\n'
+      return text[0:-1]
 
    def build(self, x, y):
       self.map[y][x] = Maze.WALL
@@ -53,7 +55,7 @@ class Maze:
          self.build(self.width - 1, y)
 
    def generate(self):
-      """ generate a random maze using prims algorithm """
+      """ generate a random maze using Prim's algorithm """
 
       scaled_complexity = 5 * self.complexity * (self.width + self.height)
       scaled_density    = self.density * (self.width // 2) * (self.height // 2)
@@ -91,5 +93,5 @@ class Maze:
 
 maze = Maze(60, 30)
 
-maze.print()
+print(maze)
 
