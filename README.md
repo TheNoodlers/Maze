@@ -34,3 +34,24 @@ Direct build using cmake...
     cd build
     cmake ..
     make
+
+## Run
+
+After a build binary will be found here buid/native/maze
+
+Command line interface...
+
+    NAME
+         Maze - Maze generator
+
+    SYNOPSIS
+         maze [options] 
+
+    OPTIONS
+         -v,--version             Display version information
+         -h,--help                Display this help
+         -W,--width <unsigned>    Width [400]
+         -H,--height <unsigned>   Height [400]
+         -s,--scale <unsigned>    Scale [2]
+         -c,--complexity <float>  Complexity [0.75]
+         -d,--density <float>     Density [0.75]
