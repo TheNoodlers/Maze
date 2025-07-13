@@ -36,12 +36,11 @@ public:
             unsigned    scale_)
       : frame(title_, width_ * scale_, height_ * scale_)
       , scale(scale_)
+      , refresh_time(clock())
    {
       clear(STB::BLACK);
 
       buildPalette();
-
-      refresh_time = clock();
    }
 
    //! Clear frame to a single colour
@@ -58,12 +57,12 @@ public:
 
       frame.fillRect(colour, px, py, px + scale, py + scale);
 
-      if (isRefresh())
+      if(isRefreshTime())
       {
          refresh();
 
          // Poll for quit at ~1 Hz
-         if (++n >= REFRESH_FREQ)
+         if(++n >= REFRESH_FREQ)
          {
             n = 0;
             return pollForQuit();
@@ -123,19 +122,14 @@ private:
       }
    }
 
-   bool isRefresh()
+   bool isRefreshTime()
    {
       signed remainder = refresh_time - clock();
       if (remainder > 0)
          return false;
 
-      scheduleRefresh();
-      return true;
-   }
-
-   void scheduleRefresh()
-   {
       refresh_time = clock() + (CLOCKS_PER_SEC / REFRESH_FREQ);
+      return true;
    }
 
    static const unsigned REFRESH_FREQ = 20;

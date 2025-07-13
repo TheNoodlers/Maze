@@ -27,7 +27,7 @@ Developed on MacOS but should build on Linux too. Indirect build with
 
     make
 
-Direct build using cmake...
+Direct build using `cmake` and `make`...
 
     mkdir build
     cd build

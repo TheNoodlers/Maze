@@ -35,10 +35,9 @@ public:
         unsigned height_,
         double   param1_,
         double   param2_)
-      // Ensure width and height are odd
       : param1(param1_)
       , param2(param2_)
-      , width((width_ / 2) * 2 + 1)
+      , width((width_ / 2) * 2 + 1)    // Ensure width and height are odd
       , height((height_ / 2) * 2 + 1)
    {
       map.resize(width * height);
@@ -59,7 +58,7 @@ public:
       catch(...)
       {
       }
- 
+
       renderer->refresh();
 
       renderer = nullptr;
@@ -76,7 +75,7 @@ public:
       catch(...)
       {
       }
- 
+
       renderer->refresh();
 
       renderer = nullptr;
@@ -85,9 +84,8 @@ public:
 protected:
    using Cell = uint32_t;
 
-   static constexpr Cell PATH    = 0xFFFFffff;
-   static constexpr Cell WALL    = 0;
-   static constexpr Cell VISITED = 1;
+   static constexpr Cell PATH = 0xFFFFffff;
+   static constexpr Cell WALL = 0;
 
    struct Coord
    {
@@ -101,12 +99,12 @@ protected:
 
    Cell get(unsigned x, unsigned y) const { return map[index(x, y)]; }
 
-   //! Set a cell as wall 
+   //! Set a cell as wall
    void wall(unsigned x, unsigned y)
    {
-      map[index(x,y)] = WALL;
+      map[index(x, y)] = WALL;
 
-      if (renderer->plot(COL_WALL, x, y))
+      if(renderer->plot(COL_WALL, x, y))
       {
          throw true;
       }
@@ -115,9 +113,9 @@ protected:
    //! Set a cell as visited
    void visit(unsigned x, unsigned y, size_t dist)
    {
-      map[index(x,y)] = dist;
+      map[index(x, y)] = dist;
 
-      if (renderer->plotPal(dist, x, y))
+      if(renderer->plotPal(dist, x, y))
       {
          throw true;
       }
@@ -142,13 +140,13 @@ private:
 
       for(; pos.x < width; pos.x++)
       {
-         if (get(pos.x, pos.y) == PATH)
+         if(get(pos.x, pos.y) == PATH)
          {
             break;
          }
       }
 
-      size_t max_dist{0};
+      size_t             max_dist{0};
       std::vector<Place> list_a{};
       std::vector<Place> list_b{};
 
