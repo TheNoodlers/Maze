@@ -61,12 +61,7 @@ public:
       {
          refresh();
 
-         // Poll for quit at ~1 Hz
-         if(++n >= REFRESH_FREQ)
-         {
-            n = 0;
-            return pollForQuit();
-         }
+         return pollForQuit();
       }
 
       return false;
@@ -138,6 +133,5 @@ private:
    GUI::Frame  frame;
    unsigned    scale;
    clock_t     refresh_time;
-   unsigned    n{REFRESH_FREQ};
    STB::Colour palette[PALETTE_SIZE];
 };
