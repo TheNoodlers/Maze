@@ -150,6 +150,7 @@ private:
       std::vector<Place> list_a{};
       std::vector<Place> list_b{};
 
+      visit(pos.x, pos.y, pos.dist);
       list_a.push_back(pos);
 
       while(true)
@@ -161,19 +162,29 @@ private:
             if (p.dist > max_dist)
                max_dist = p.dist;
 
-            visit(p.x, p.y, p.dist);
-
             if (get(p.x + 1, p.y) > (p.dist + 1))
+            {
+               visit(p.x + 1, p.y, p.dist + 1);
                list_b.push_back({p.x + 1, p.y, p.dist + 1});
+            }
 
             if (get(p.x - 1, p.y) > (p.dist + 1))
+            {
+               visit(p.x - 1, p.y, p.dist + 1);
                list_b.push_back({p.x - 1, p.y, p.dist + 1});
+            }
 
             if (get(p.x, p.y + 1) > (p.dist + 1))
+            {
+               visit(p.x, p.y + 1, p.dist + 1);
                list_b.push_back({p.x, p.y + 1, p.dist + 1});
+            }
 
             if (get(p.x, p.y - 1) > (p.dist + 1))
+            {
+               visit(p.x, p.y - 1, p.dist + 1);
                list_b.push_back({p.x, p.y - 1, p.dist + 1});
+            }
          }
 
          renderer->refresh();
