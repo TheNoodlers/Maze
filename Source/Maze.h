@@ -97,7 +97,20 @@ protected:
 
    unsigned getHeight() const { return height; }
 
+   void clear(Cell cell = PATH)
+   {
+      switch(cell)
+      {
+      case PATH: renderer->clear(COL_PATH); break;
+      case WALL: renderer->clear(COL_WALL); break;
+      }
+
+      std::fill(map.begin(), map.end(), cell);
+   }
+
    Cell get(unsigned x, unsigned y) const { return map[index(x, y)]; }
+
+   Cell get(const Coord& pos) const { return map[index(pos.x, pos.y)]; }
 
    //! Set a cell as wall
    void wall(unsigned x, unsigned y)
@@ -105,6 +118,17 @@ protected:
       map[index(x, y)] = WALL;
 
       if(renderer->plot(COL_WALL, x, y))
+      {
+         throw true;
+      }
+   }
+
+   //! Set a cell as path
+   void path(const Coord& pos)
+   {
+      map[index(pos.x, pos.y)] = PATH;
+
+      if(renderer->plot(COL_PATH, pos.x, pos.y))
       {
          throw true;
       }
@@ -212,19 +236,12 @@ private:
       }
    }
 
-   void clear()
-   {
-      renderer->clear(COL_SPACE);
-
-      std::fill(map.begin(), map.end(), PATH);
-   }
-
    size_t index(unsigned x, unsigned y) const { return y * width + x; }
 
    virtual void generate() = 0;
 
-   static const STB::Colour COL_WALL  = STB::BLACK;
-   static const STB::Colour COL_SPACE = STB::WHITE;
+   static const STB::Colour COL_WALL = STB::BLACK;
+   static const STB::Colour COL_PATH = STB::WHITE;
 
    const unsigned    width;
    const unsigned    height;
