@@ -7,7 +7,7 @@
 
 #include "Maze.h"
 
-//! Generate maze using tye depth first algorithm
+//! Generate maze using the depth first algorithm
 class DepthFirstMaze : public Maze
 {
 public:

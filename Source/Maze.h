@@ -20,8 +20,8 @@ public:
         double   param2_)
       : param1(param1_)
       , param2(param2_)
-      , width((width_ / 2) * 2 + 1)    // Ensure width and height are odd
-      , height((height_ / 2) * 2 + 1)
+      , width(normaliseDimension(width_))
+      , height(normaliseDimension(height_))
    {
       map.resize(width * height);
    }
@@ -222,6 +222,15 @@ private:
    size_t index(unsigned x, unsigned y) const { return y * width + x; }
 
    virtual void generate() = 0;
+
+   //! Ensure dimensions stay large enough for random distributions
+   static unsigned normaliseDimension(unsigned value_)
+   {
+      static const unsigned MIN_DIM = 3;
+
+      unsigned adjusted = (value_ < MIN_DIM) ? MIN_DIM : value_;
+      return ((adjusted / 2) * 2) + 1;
+   }
 
    static const STB::Colour COL_WALL = STB::BLACK;
    static const STB::Colour COL_PATH = STB::WHITE;
