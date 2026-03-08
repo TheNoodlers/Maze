@@ -4,7 +4,7 @@
 
 ## Dependencies
 
-+ https://github.com/AnotherJohnH/Platform  (pulled in at checkout)
++ https://github.com/SloeComputers/Platform  (pulled in at checkout)
 + SDL2
 + cmake via UNIX make or auto detection of ninja if installed
 + Python3
@@ -36,7 +36,7 @@ Direct build using `cmake` and `make`...
 
 ## Run
 
-After a build binary will be found here `buid/native/maze`. Command line interface...
+After a build binary will be found here `build/native/maze`. Command line interface...
 
     NAME
          Maze - Maze generator
