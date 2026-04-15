@@ -4,7 +4,7 @@
 
 ## Dependencies
 
-+ https://github.com/SloeComputers/Platform  (pulled in at checkout)
++ https://github.com/SloeComputers/PDK (pulled in at checkout)
 + SDL2
 + cmake via UNIX make or auto detection of ninja if installed
 + Python3
