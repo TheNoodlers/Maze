@@ -143,9 +143,9 @@ private:
       };
 
       // Find starting point near the middle
-      Place pos{int(width / 2), int(height / 2), 0};
+      Place pos{signed(width / 2), signed(height / 2), 0};
 
-      for(; pos.x < width; pos.x++)
+      for(; pos.x < signed(width); pos.x++)
       {
          if(get(pos.x, pos.y) == PATH)
          {

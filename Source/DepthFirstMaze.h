@@ -41,13 +41,13 @@ public:
          pos.x -= 2;
          if ((pos.x > 1) && get(pos) == WALL) neighbours.push_back(pos);
          pos.x += 4;
-         if ((pos.x < (getWidth() - 2)) && get(pos) == WALL) neighbours.push_back(pos);
+         if ((pos.x < (signed(getWidth()) - 2)) && get(pos) == WALL) neighbours.push_back(pos);
          pos.x -= 2;
 
          pos.y -= 2;
          if ((pos.y > 1) && get(pos) == WALL) neighbours.push_back(pos);
          pos.y += 4;
-         if ((pos.y < (getHeight() - 2)) && get(pos) == WALL) neighbours.push_back(pos);
+         if ((pos.y < (signed(getHeight()) - 2)) && get(pos) == WALL) neighbours.push_back(pos);
          pos.y -= 2;
 
          if (not neighbours.empty())

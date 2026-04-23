@@ -38,10 +38,10 @@ public:
          {
             neighbours.clear();
 
-            if (x > 1)                 neighbours.push_back({x - 2, y});
-            if (x < (getWidth() - 2))  neighbours.push_back({x + 2, y});
-            if (y > 1)                 neighbours.push_back({x, y - 2});
-            if (y < (getHeight() - 2)) neighbours.push_back({x, y + 2});
+            if (x > 1)                         neighbours.push_back({x - 2, y});
+            if (x < (signed(getWidth()) - 2))  neighbours.push_back({x + 2, y});
+            if (y > 1)                         neighbours.push_back({x, y - 2});
+            if (y < (signed(getHeight()) - 2)) neighbours.push_back({x, y + 2});
 
             if(not neighbours.empty())
             {
