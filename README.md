@@ -2,6 +2,10 @@
 
 ![screenshot](Docs/Screenshot.png)
 
+## Status
+
+[![Build Status](https://github.com/TheNoodlers/Maze/actions/workflows/build_on_push.yml/badge.svg)](https://github.com/TheNoodlers/Maze/actions/workflows/build_on_push.yml)
+
 ## Dependencies
 
 + https://github.com/SloeComputers/PDK (pulled in at checkout)

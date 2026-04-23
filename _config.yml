@@ -1,0 +1,5 @@
+theme: jekyll-theme-slate
+title: Maze
+description: A SloeComputers Project
+exclude:
+   - PDK
